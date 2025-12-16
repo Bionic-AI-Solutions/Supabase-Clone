@@ -15,6 +15,7 @@ import Usage from "./pages/Usage";
 import Billing from "./pages/Billing";
 import Settings from "./pages/Settings";
 import AdminPanel from "./pages/AdminPanel";
+import Studio from "./pages/Studio";
 
 function Router() {
   return (
@@ -24,6 +25,7 @@ function Router() {
       <Route path={"/organizations"} component={Organizations} />
       <Route path={"/projects"} component={Projects} />
       <Route path={"/projects/:id"} component={ProjectDetail} />
+      <Route path={"/projects/:id/studio"} component={Studio} />
       <Route path={"/projects/:id/functions"} component={EdgeFunctions} />
       <Route path={"/projects/:id/realtime"} component={Realtime} />
       <Route path={"/projects/:id/usage"} component={Usage} />
