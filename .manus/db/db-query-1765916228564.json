@@ -1,0 +1,18 @@
+{
+  "query": "SELECT id, openId, name, email, role, createdAt FROM users ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3WJjMnpm9SRBMYK.aae1b1f5d6f1 --database HvfubTSuf8DLJg8LqxTTse --execute SELECT id, openId, name, email, role, createdAt FROM users ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "openId": "QZQaC29pnmuB2Z3BRCQGsC",
+      "name": "Salil Kadam",
+      "email": "salil.kadam@gmail.com",
+      "role": "admin",
+      "createdAt": "2025-12-16 19:03:09"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\trole\tcreatedAt\n1\tQZQaC29pnmuB2Z3BRCQGsC\tSalil Kadam\tsalil.kadam@gmail.com\tadmin\t2025-12-16 19:03:09\n",
+  "stderr": "",
+  "execution_time_ms": 50
+}

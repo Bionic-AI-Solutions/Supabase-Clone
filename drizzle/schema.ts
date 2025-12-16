@@ -134,7 +134,7 @@ export const edgeFunctions = mysqlTable("edgeFunctions", {
   
   // Runtime configuration
   importMapUrl: text("importMapUrl"),
-  entrypoint: text("entrypoint").notNull(),
+  entrypoint: varchar("entrypoint", { length: 500 }).default("index.ts").notNull(),
   verifyJwt: boolean("verifyJwt").default(true).notNull(),
   
   // Environment variables (JSON object)

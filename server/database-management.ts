@@ -71,12 +71,23 @@ export async function executeQuery(
       finalQuery += ` LIMIT ${maxRows}`;
     }
 
-    // Execute query
-    const result = await db.execute(finalQuery);
+    // Execute query using raw SQL
+    const result: any = await db.execute(sql.raw(finalQuery));
     const executionTime = Date.now() - startTime;
 
-    // Extract columns and rows
-    const rows = Array.isArray(result) ? result : [];
+    // Drizzle returns an array of RowDataPacket objects
+    // We need to convert them to plain objects
+    const rows = Array.isArray(result) ? result.map((row: any) => {
+      // Convert RowDataPacket to plain object
+      const plainRow: any = {};
+      for (const key in row) {
+        if (row.hasOwnProperty(key)) {
+          plainRow[key] = row[key];
+        }
+      }
+      return plainRow;
+    }) : [];
+    
     const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
 
     return {

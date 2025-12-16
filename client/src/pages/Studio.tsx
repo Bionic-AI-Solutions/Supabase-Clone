@@ -244,15 +244,30 @@ function SQLEditor({ projectId }: { projectId: number }) {
                 <TableBody>
                   {result.rows.map((row: any, idx: number) => (
                     <TableRow key={idx}>
-                      {result.columns.map((col: string) => (
-                        <TableCell key={col} className="font-mono text-xs">
-                          {row[col] === null ? (
-                            <span className="text-muted-foreground italic">NULL</span>
-                          ) : (
-                            String(row[col])
-                          )}
-                        </TableCell>
-                      ))}
+                      {result.columns.map((col: string) => {
+                        const value = row[col];
+                        let displayValue: string;
+                        
+                        if (value === null || value === undefined) {
+                          displayValue = 'NULL';
+                        } else if (value instanceof Date) {
+                          displayValue = value.toISOString();
+                        } else if (typeof value === 'object') {
+                          displayValue = JSON.stringify(value);
+                        } else {
+                          displayValue = String(value);
+                        }
+                        
+                        return (
+                          <TableCell key={col} className="font-mono text-xs">
+                            {value === null || value === undefined ? (
+                              <span className="text-muted-foreground italic">{displayValue}</span>
+                            ) : (
+                              displayValue
+                            )}
+                          </TableCell>
+                        );
+                      })}
                     </TableRow>
                   ))}
                 </TableBody>

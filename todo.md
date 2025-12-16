@@ -199,3 +199,15 @@
 - [x] Show example requests and responses
 - [x] Integrate all components into Studio page
 - [x] Test database management features thoroughly
+
+## Phase 24: Fix SQL Editor Display Bug and Add Seed Data
+- [ ] Update database schema to add default values for optional fields
+- [ ] Add defaults for edge functions fields (entrypoint, version, etc.)
+- [ ] Add defaults for realtime channels fields
+- [ ] Push schema changes to database
+- [ ] Run seed script to populate demo data
+- [ ] Test SQL Editor with realistic data volumes
+- [ ] Verify query results display correctly
+
+## Known Issues
+- SQL Editor displays query results with column "0" instead of actual column names - needs investigation into Drizzle result format

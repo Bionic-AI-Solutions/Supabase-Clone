@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COUNT(*) as total FROM organizations;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3WJjMnpm9SRBMYK.aae1b1f5d6f1 --database HvfubTSuf8DLJg8LqxTTse --execute SELECT COUNT(*) as total FROM organizations;",
+  "rows": [
+    {
+      "total": "186"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n186\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}
