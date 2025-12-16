@@ -211,3 +211,19 @@
 
 ## Known Issues
 - SQL Editor displays query results with column "0" instead of actual column names - needs investigation into Drizzle result format
+
+## Phase 25: Kubernetes Deployment Package
+- [x] Create Helm chart directory structure
+- [x] Build values.yaml with configurable parameters
+- [x] Create Chart.yaml with dependencies
+- [x] Build PostgreSQL deployment with CloudNativePG operator
+- [x] Create platform database initialization scripts
+- [x] Build database migration job manifests
+- [x] Create MinIO deployment for object storage
+- [x] Build platform application deployment
+- [x] Create service and ingress manifests
+- [x] Build Kong gateway configuration
+- [x] Create ConfigMaps and Secrets templates
+- [x] Write deployment documentation
+- [x] Create installation guide
+- [x] Document upgrade procedures

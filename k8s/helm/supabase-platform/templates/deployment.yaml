@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "supabase-platform.fullname" . }}
+  labels:
+    {{- include "supabase-platform.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.platform.autoscaling.enabled }}
+  replicas: {{ .Values.platform.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "supabase-platform.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "supabase-platform.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "supabase-platform.serviceAccountName" . }}
+      containers:
+      - name: platform
+        image: "{{ .Values.platform.image.repository }}:{{ .Values.platform.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.platform.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.platform.service.port }}
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          value: {{ .Values.platform.env.NODE_ENV | quote }}
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "supabase-platform.fullname" . }}-db
+              key: database-url
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "supabase-platform.fullname" . }}-secrets
+              key: jwt-secret
+        - name: TENANT_POSTGRES_HOST
+          value: {{ include "supabase-platform.fullname" . }}-tenant-postgres-rw
+        - name: TENANT_POSTGRES_PORT
+          value: "5432"
+        - name: TENANT_POSTGRES_USER
+          value: "postgres"
+        - name: TENANT_POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "supabase-platform.fullname" . }}-tenant-postgres
+              key: password
+        - name: MINIO_ENDPOINT
+          value: {{ include "supabase-platform.fullname" . }}-minio:9000
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "supabase-platform.fullname" . }}-minio
+              key: root-user
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "supabase-platform.fullname" . }}-minio
+              key: root-password
+        - name: OWNER_OPEN_ID
+          value: {{ .Values.platform.env.OWNER_OPEN_ID | quote }}
+        - name: OWNER_NAME
+          value: {{ .Values.platform.env.OWNER_NAME | quote }}
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          {{- toYaml .Values.platform.resources | nindent 10 }}

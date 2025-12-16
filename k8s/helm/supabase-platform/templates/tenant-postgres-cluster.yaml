@@ -1,0 +1,61 @@
+{{- if .Values.tenantPostgres.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "supabase-platform.fullname" . }}-tenant-postgres
+  labels:
+    {{- include "supabase-platform.labels" . | nindent 4 }}
+spec:
+  instances: {{ .Values.tenantPostgres.cluster.instances }}
+  
+  postgresql:
+    parameters:
+      {{- toYaml .Values.tenantPostgres.cluster.postgresql.parameters | nindent 6 }}
+  
+  bootstrap:
+    initdb:
+      database: postgres
+      owner: postgres
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        - CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+  
+  storage:
+    size: {{ .Values.tenantPostgres.cluster.storage.size }}
+    {{- if .Values.tenantPostgres.cluster.storage.storageClass }}
+    storageClass: {{ .Values.tenantPostgres.cluster.storage.storageClass }}
+    {{- end }}
+  
+  resources:
+    {{- toYaml .Values.tenantPostgres.cluster.resources | nindent 4 }}
+  
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://{{ include "supabase-platform.fullname" . }}-backups/tenant-postgres
+      endpointURL: http://{{ include "supabase-platform.fullname" . }}-minio:9000
+      s3Credentials:
+        accessKeyId:
+          name: {{ include "supabase-platform.fullname" . }}-minio
+          key: root-user
+        secretAccessKey:
+          name: {{ include "supabase-platform.fullname" . }}-minio
+          key: root-password
+      wal:
+        compression: gzip
+      data:
+        compression: gzip
+    retentionPolicy: "30d"
+  
+  monitoring:
+    enablePodMonitor: {{ .Values.monitoring.enabled }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "supabase-platform.fullname" . }}-tenant-postgres
+  labels:
+    {{- include "supabase-platform.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  password: {{ randAlphaNum 32 | quote }}
+{{- end }}

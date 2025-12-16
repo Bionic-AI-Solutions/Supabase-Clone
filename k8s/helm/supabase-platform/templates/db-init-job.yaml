@@ -1,0 +1,51 @@
+{{- if .Values.dbInit.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "supabase-platform.fullname" . }}-db-init
+  labels:
+    {{- include "supabase-platform.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "supabase-platform.selectorLabels" . | nindent 8 }}
+        job: db-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: db-init
+        image: "{{ .Values.dbInit.image.repository }}:{{ .Values.dbInit.image.tag }}"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Waiting for PostgreSQL to be ready..."
+          until pg_isready -h {{ include "supabase-platform.fullname" . }}-postgresql -U {{ .Values.postgresql.auth.username }}; do
+            echo "Waiting for database..."
+            sleep 2
+          done
+          
+          echo "Running database migrations..."
+          export PGPASSWORD="{{ .Values.postgresql.auth.password }}"
+          
+          # Create extensions
+          psql -h {{ include "supabase-platform.fullname" . }}-postgresql \
+               -U {{ .Values.postgresql.auth.username }} \
+               -d {{ .Values.postgresql.auth.database }} \
+               -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
+          
+          psql -h {{ include "supabase-platform.fullname" . }}-postgresql \
+               -U {{ .Values.postgresql.auth.username }} \
+               -d {{ .Values.postgresql.auth.database }} \
+               -c "CREATE EXTENSION IF NOT EXISTS \"pgcrypto\";"
+          
+          echo "Database initialization complete!"
+        resources:
+          {{- toYaml .Values.dbInit.resources | nindent 10 }}
+{{- end }}
