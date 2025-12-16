@@ -182,3 +182,20 @@
 - [ ] Implement project context switching in Studio
 - [ ] Add loading states and error handling
 - [ ] Test Studio access from multiple projects
+
+## Phase 23: Database Management UI (Option A - MVP)
+- [x] Create SQL Editor component with syntax highlighting
+- [x] Implement query execution backend endpoint
+- [x] Build results table with export functionality
+- [ ] Add query history and saved queries
+- [x] Create Table Browser component
+- [x] Implement table data fetching with pagination
+- [ ] Add row editing and deletion
+- [x] Build Schema Visualizer component
+- [x] Fetch and display database schema structure
+- [ ] Show table relationships and foreign keys
+- [x] Create API Documentation generator
+- [x] Generate REST API docs from schema
+- [x] Show example requests and responses
+- [x] Integrate all components into Studio page
+- [x] Test database management features thoroughly

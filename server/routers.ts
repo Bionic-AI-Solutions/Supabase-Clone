@@ -738,6 +738,160 @@ export const appRouter = router({
   }),
 
   // ============================================================================
+  // DATABASE MANAGEMENT
+  // ============================================================================
+
+  database: router({ executeQuery: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        query: z.string(),
+        maxRows: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId);
+        if (!project) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        }
+
+        await checkOrganizationAccess(ctx.user.id, project.organizationId);
+
+        const dbMgmt = await import("./database-management");
+        return await dbMgmt.executeQuery(
+          project.databaseName,
+          project.databaseSchema,
+          input.query,
+          input.maxRows
+        );
+      }),
+
+    getTables: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId);
+        if (!project) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        }
+
+        await checkOrganizationAccess(ctx.user.id, project.organizationId);
+
+        const dbMgmt = await import("./database-management");
+        return await dbMgmt.getTables(project.databaseName, project.databaseSchema);
+      }),
+
+    getTableColumns: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        tableName: z.string(),
+      }))
+      .query(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId);
+        if (!project) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        }
+
+        await checkOrganizationAccess(ctx.user.id, project.organizationId);
+
+        const dbMgmt = await import("./database-management");
+        return await dbMgmt.getTableColumns(
+          project.databaseName,
+          project.databaseSchema,
+          input.tableName
+        );
+      }),
+
+    getSchemaInfo: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId);
+        if (!project) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        }
+
+        await checkOrganizationAccess(ctx.user.id, project.organizationId);
+
+        const dbMgmt = await import("./database-management");
+        return await dbMgmt.getSchemaInfo(project.databaseName, project.databaseSchema);
+      }),
+
+    getTableData: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        tableName: z.string(),
+        page: z.number().optional(),
+        pageSize: z.number().optional(),
+      }))
+      .query(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId);
+        if (!project) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        }
+
+        await checkOrganizationAccess(ctx.user.id, project.organizationId);
+
+        const dbMgmt = await import("./database-management");
+        return await dbMgmt.getTableData(
+          project.databaseName,
+          project.databaseSchema,
+          input.tableName,
+          input.page,
+          input.pageSize
+        );
+      }),
+
+    updateRow: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        tableName: z.string(),
+        primaryKeyColumn: z.string(),
+        primaryKeyValue: z.any(),
+        updates: z.record(z.string(), z.any()),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId);
+        if (!project) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        }
+
+        await checkOrganizationAccess(ctx.user.id, project.organizationId, "admin");
+
+        const dbMgmt = await import("./database-management");
+        return await dbMgmt.updateTableRow(
+          project.databaseName,
+          project.databaseSchema,
+          input.tableName,
+          input.primaryKeyColumn,
+          input.primaryKeyValue,
+          input.updates
+        );
+      }),
+
+    deleteRow: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        tableName: z.string(),
+        primaryKeyColumn: z.string(),
+        primaryKeyValue: z.any(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId);
+        if (!project) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        }
+
+        await checkOrganizationAccess(ctx.user.id, project.organizationId, "admin");
+
+        const dbMgmt = await import("./database-management");
+        return await dbMgmt.deleteTableRow(
+          project.databaseName,
+          project.databaseSchema,
+          input.tableName,
+          input.primaryKeyColumn,
+          input.primaryKeyValue
+        );
+      }),
+  }),
+
+  // ============================================================================
   // ADMIN PANEL
   // ============================================================================
 
