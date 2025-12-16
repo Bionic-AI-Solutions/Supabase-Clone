@@ -38,6 +38,8 @@ export const organizations = mysqlTable("organizations", {
   name: varchar("name", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   ownerUserId: int("ownerUserId").notNull(),
+  // Organization-level database name for multi-tenant isolation
+  orgDatabase: varchar("orgDatabase", { length: 255 }).notNull().unique(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -66,8 +68,9 @@ export const projects = mysqlTable("projects", {
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   organizationId: int("organizationId").notNull(),
   
-  // Database configuration
-  databaseName: varchar("databaseName", { length: 255 }).notNull().unique(),
+  // Database configuration (schema-based isolation within org database)
+  databaseName: varchar("databaseName", { length: 255 }).notNull(), // Organization database name
+  databaseSchema: varchar("databaseSchema", { length: 255 }).notNull().unique(), // Project-specific schema
   databaseHost: varchar("databaseHost", { length: 255 }),
   databasePort: int("databasePort").default(5432),
   

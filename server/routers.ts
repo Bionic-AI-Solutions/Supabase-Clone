@@ -94,10 +94,14 @@ export const appRouter = router({
           throw new TRPCError({ code: "CONFLICT", message: "Organization with this name already exists" });
         }
 
+        // Generate organization database name
+        const orgDatabase = `supabase_org_${slug}`;
+        
         const orgId = await db.createOrganization({
           name: input.name,
           slug,
           ownerUserId: ctx.user.id,
+          orgDatabase,
         });
 
         // Add creator as owner
@@ -280,12 +284,19 @@ export const appRouter = router({
           throw new TRPCError({ code: "CONFLICT", message: "Project with this name already exists" });
         }
 
-        // Create project record
+        // Get organization to determine database name
+        const organization = await db.getOrganizationById(input.organizationId);
+        if (!organization) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
+        }
+        
+        // Create project record with schema-based isolation
         const projectId = await db.createProject({
           name: input.name,
           slug,
           organizationId: input.organizationId,
-          databaseName: `supabase_${slug}`,
+          databaseName: organization.orgDatabase, // Use org database
+          databaseSchema: `project_${slug}`, // Project-specific schema
           region: input.region || "us-west-1",
           status: "provisioning",
         });

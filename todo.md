@@ -122,3 +122,63 @@
 - [x] Build navigation between platform and Studio
 - [x] Add Studio routes to project detail view
 - [x] Test Studio integration with multiple projects
+
+## Phase 15: Fix Actual Functionality (CRITICAL)
+- [ ] Test complete user journey from login to project creation
+- [ ] Fix Dashboard to show real organization and project data
+- [ ] Verify Organizations page CRUD operations work correctly
+- [ ] Verify Projects page creation and listing works
+- [ ] Fix ProjectDetail page to show real credentials
+- [ ] Test project pause/resume functionality
+
+## Phase 16: Embed Real Supabase Studio
+- [ ] Set up Supabase Studio from cloned repo (/home/ubuntu/supabase/apps/studio)
+- [ ] Configure Studio to run as a separate service on port 8080
+- [ ] Implement authentication passthrough from platform to Studio
+- [ ] Create project context switching mechanism
+- [ ] Embed Studio in iframe with proper authentication
+- [ ] Test Studio access for multiple projects
+
+## Phase 17: Complete Edge Functions and Realtime
+- [ ] Build Edge Functions deployment interface with code editor
+- [ ] Implement function logs viewer
+- [ ] Create Realtime channels management UI
+- [ ] Add usage analytics charts with real data
+- [ ] Implement billing dashboard with subscription tiers
+
+## Phase 18: Refactor Database Architecture (CRITICAL)
+- [x] Update database schema to track organization-level database names
+- [x] Modify project provisioning to create schemas instead of separate databases
+- [x] Update provisioning logic to create org database on first project
+- [x] Implement schema creation per project within org database
+- [x] Update connection string generation for schema-based access
+- [x] Migrate existing test data to new architecture
+
+## Phase 19: Supabase Studio Setup
+- [ ] Install Studio dependencies in /home/ubuntu/supabase/apps/studio
+- [ ] Configure Studio environment variables for multi-tenant use
+- [ ] Set up Studio to run on port 8082
+- [ ] Create Studio startup script
+- [ ] Test Studio runs independently
+
+## Phase 20: Studio Proxy Implementation
+- [ ] Build proxy service to route Studio requests
+- [ ] Implement organization context detection from auth tokens
+- [ ] Implement project schema switching logic
+- [ ] Add connection string injection per organization
+- [ ] Secure proxy with authentication middleware
+- [ ] Test proxy routing with multiple organizations
+
+## Phase 21: MinIO Integration
+- [ ] Set up MinIO bucket naming convention (org_project)
+- [ ] Implement bucket creation during project provisioning
+- [ ] Generate per-project MinIO access policies
+- [ ] Configure Studio storage to use correct buckets
+- [ ] Test storage isolation between projects
+
+## Phase 22: Frontend Studio Integration
+- [ ] Update Studio page to embed iframe with proxy URL
+- [ ] Pass authentication tokens to Studio proxy
+- [ ] Implement project context switching in Studio
+- [ ] Add loading states and error handling
+- [ ] Test Studio access from multiple projects

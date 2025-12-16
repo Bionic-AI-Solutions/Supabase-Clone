@@ -1,0 +1,2 @@
+ALTER TABLE `organizations` ADD CONSTRAINT `organizations_orgDatabase_unique` UNIQUE(`orgDatabase`);--> statement-breakpoint
+ALTER TABLE `projects` ADD CONSTRAINT `projects_databaseSchema_unique` UNIQUE(`databaseSchema`);

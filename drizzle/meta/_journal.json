@@ -15,6 +15,13 @@
       "when": 1765911296275,
       "tag": "0001_lonely_wind_dancer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1765914986146,
+      "tag": "0002_pretty_legion",
+      "breakpoints": true
     }
   ]
 }
