@@ -488,7 +488,7 @@ export const appRouter = router({
         return await db.getProjectEdgeFunctions(input.projectId);
       }),
 
-    get: protectedProcedure
+    getById: protectedProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ ctx, input }) => {
         const func = await db.getEdgeFunctionById(input.id);
@@ -503,21 +503,22 @@ export const appRouter = router({
       .input(z.object({
         projectId: z.number(),
         name: z.string().min(1).max(255),
-        entrypoint: z.string(),
-        verifyJwt: z.boolean().optional(),
+        code: z.string().optional(),
         envVars: z.record(z.string(), z.string()).optional()
       }))
       .mutation(async ({ ctx, input }) => {
         await checkProjectAccess(ctx.user.id, input.projectId, "admin");
 
         const slug = generateSlug(input.name);
+        const defaultCode = input.code || `// ${input.name}\nexport default async function handler(req: Request) {\n  return new Response(\n    JSON.stringify({ message: 'Hello from ${input.name}!' }),\n    { headers: { 'Content-Type': 'application/json' } }\n  );\n}`;
 
         const functionId = await db.createEdgeFunction({
           projectId: input.projectId,
           name: input.name,
           slug,
-          entrypoint: input.entrypoint,
-          verifyJwt: input.verifyJwt ?? true,
+          entrypoint: `${slug}.ts`,
+          code: defaultCode,
+          verifyJwt: true,
           envVars: input.envVars ?? null,
           status: "inactive",
         });
@@ -529,7 +530,7 @@ export const appRouter = router({
       .input(z.object({
         id: z.number(),
         name: z.string().optional(),
-        entrypoint: z.string().optional(),
+        code: z.string().optional(),
         verifyJwt: z.boolean().optional(),
         envVars: z.record(z.string(), z.string()).optional()
       }))
@@ -559,6 +560,50 @@ export const appRouter = router({
         await db.deleteEdgeFunction(input.id);
 
         return { success: true };
+      }),
+
+    deploy: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const func = await db.getEdgeFunctionById(input.id);
+        if (!func) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Function not found" });
+        }
+
+        await checkProjectAccess(ctx.user.id, func.projectId, "admin");
+        
+        // Update function status to active and increment version
+        await db.updateEdgeFunction(input.id, {
+          status: "active",
+          version: func.version + 1,
+        });
+
+        return { success: true, version: func.version + 1 };
+      }),
+
+    invoke: protectedProcedure
+      .input(z.object({ 
+        id: z.number(),
+        payload: z.any().optional()
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const func = await db.getEdgeFunctionById(input.id);
+        if (!func) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Function not found" });
+        }
+
+        await checkProjectAccess(ctx.user.id, func.projectId);
+        
+        // In a real implementation, this would invoke the actual edge function
+        // For now, return a mock response
+        return {
+          success: true,
+          result: {
+            message: "Function invoked successfully",
+            payload: input.payload,
+            timestamp: Date.now()
+          }
+        };
       }),
 
     logs: protectedProcedure

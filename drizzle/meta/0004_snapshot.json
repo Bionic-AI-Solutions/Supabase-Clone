@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "d7f42383-e2e5-4780-89f4-c8eea4530d74",
-  "prevId": "e1974b72-0b89-47db-ae32-54f37e756c09",
+  "id": "e8003b3b-1b09-4acb-95cf-b82e2536fcd1",
+  "prevId": "d7f42383-e2e5-4780-89f4-c8eea4530d74",
   "tables": {
     "auditLogs": {
       "name": "auditLogs",
@@ -302,6 +302,13 @@
           "notNull": true,
           "autoincrement": false,
           "default": true
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "envVars": {
           "name": "envVars",

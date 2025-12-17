@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "e1974b72-0b89-47db-ae32-54f37e756c09",
-  "prevId": "f3d52052-b851-4778-9d47-53fe25cf5209",
+  "id": "982fde5d-ef67-4da5-ad61-8daffab8c485",
+  "prevId": "d7f42383-e2e5-4780-89f4-c8eea4530d74",
   "tables": {
     "auditLogs": {
       "name": "auditLogs",
@@ -289,11 +289,11 @@
         },
         "entrypoint": {
           "name": "entrypoint",
-          "type": "text",
+          "type": "varchar(500)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "('index.ts')"
+          "default": "'index.ts'"
         },
         "verifyJwt": {
           "name": "verifyJwt",
@@ -302,6 +302,13 @@
           "notNull": true,
           "autoincrement": false,
           "default": true
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "envVars": {
           "name": "envVars",

@@ -1,0 +1,1 @@
+ALTER TABLE `edgeFunctions` ADD `code` text;

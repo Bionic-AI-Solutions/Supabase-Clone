@@ -22,6 +22,20 @@
       "when": 1765914986146,
       "tag": "0002_pretty_legion",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1765924138270,
+      "tag": "0003_wild_riptide",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1765941492588,
+      "tag": "0004_clammy_madame_web",
+      "breakpoints": true
     }
   ]
 }

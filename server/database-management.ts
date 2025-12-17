@@ -75,10 +75,11 @@ export async function executeQuery(
     const result: any = await db.execute(sql.raw(finalQuery));
     const executionTime = Date.now() - startTime;
 
-    // Drizzle returns an array of RowDataPacket objects
-    // We need to convert them to plain objects
-    const rows = Array.isArray(result) ? result.map((row: any) => {
-      // Convert RowDataPacket to plain object
+    // Drizzle returns [rows, metadata] tuple
+    // Extract the actual rows from result[0]
+    const rawRows = Array.isArray(result) && result.length > 0 ? result[0] : [];
+    const rows = Array.isArray(rawRows) ? rawRows.map((row: any) => {
+      // Convert to plain object
       const plainRow: any = {};
       for (const key in row) {
         if (row.hasOwnProperty(key)) {

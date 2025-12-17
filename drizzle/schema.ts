@@ -137,6 +137,9 @@ export const edgeFunctions = mysqlTable("edgeFunctions", {
   entrypoint: varchar("entrypoint", { length: 500 }).default("index.ts").notNull(),
   verifyJwt: boolean("verifyJwt").default(true).notNull(),
   
+  // Function code
+  code: text("code"),
+  
   // Environment variables (JSON object)
   envVars: json("envVars"),
   
