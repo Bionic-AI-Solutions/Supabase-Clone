@@ -632,6 +632,18 @@ export const appRouter = router({
           return await db.getProjectRealtimeChannels(input.projectId);
         }),
 
+      getById: protectedProcedure
+        .input(z.object({ id: z.number() }))
+        .query(async ({ ctx, input }) => {
+          const channel = await db.getRealtimeChannelById(input.id);
+          if (!channel) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Channel not found" });
+          }
+
+          await checkProjectAccess(ctx.user.id, channel.projectId);
+          return channel;
+        }),
+
       create: protectedProcedure
         .input(z.object({
           projectId: z.number(),
