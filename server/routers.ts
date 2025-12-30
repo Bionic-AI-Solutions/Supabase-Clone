@@ -949,6 +949,46 @@ export const appRouter = router({
   }),
 
   // ============================================================================
+  // USERS
+  // ============================================================================
+
+  users: router({
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        role: z.enum(["admin", "user"]).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Only admins can update user roles
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Only admins can update users" });
+        }
+
+        const { id, ...updateData } = input;
+        await db.updateUser(id, updateData as any);
+
+        return { success: true };
+      }),
+  }),
+
+  // ============================================================================
+  // AUDIT LOGS
+  // ============================================================================
+
+  auditLogs: router({
+    list: protectedProcedure
+      .input(z.object({ limit: z.number().optional().default(100) }))
+      .query(async ({ ctx, input }) => {
+        // Only admins can view audit logs
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Only admins can view audit logs" });
+        }
+
+        return await db.getAuditLogs(input.limit);
+      }),
+  }),
+
+  // ============================================================================
   // ADMIN PANEL
   // ============================================================================
 

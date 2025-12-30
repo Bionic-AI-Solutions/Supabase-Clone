@@ -130,6 +130,13 @@ export async function getAllUsers() {
   return await db.select().from(users).orderBy(desc(users.createdAt));
 }
 
+export async function updateUser(id: number, updates: Partial<InsertUser>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(users).set(updates).where(eq(users.id, id));
+}
+
 // ============================================================================
 // ORGANIZATIONS
 // ============================================================================
@@ -632,6 +639,17 @@ export async function getProjectAuditLogs(projectId: number, limit = 100) {
     .select()
     .from(auditLogs)
     .where(eq(auditLogs.projectId, projectId))
+    .orderBy(desc(auditLogs.timestamp))
+    .limit(limit);
+}
+
+export async function getAuditLogs(limit = 100) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(auditLogs)
     .orderBy(desc(auditLogs.timestamp))
     .limit(limit);
 }
