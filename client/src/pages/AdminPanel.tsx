@@ -509,7 +509,7 @@ function SettingsTab() {
           <div>
             <Label className="text-muted-foreground">Database URL</Label>
             <p className="text-sm font-mono mt-1 text-muted-foreground">
-              {process.env.DATABASE_URL ? "••••••••••••••••" : "Not configured"}
+              ••••••••••••••••
             </p>
           </div>
         </CardContent>
