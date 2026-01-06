@@ -197,9 +197,37 @@ export const appRouter = router({
         .mutation(async ({ ctx, input }) => {
           await checkOrganizationAccess(ctx.user.id, input.organizationId, "admin");
 
-          // TODO: Implement user invitation system
-          // For now, just return success
-          return { success: true, message: "Invitation system not yet implemented" };
+          // Check if user exists
+          const existingUser = await db.getUserByEmail(input.userEmail);
+          
+          if (!existingUser) {
+            // User doesn't exist - would send invitation email in production
+            // For now, return message that user needs to sign up first
+            return { 
+              success: false, 
+              message: "User must sign up first before being added to organization" 
+            };
+          }
+
+          // Check if user is already a member
+          const members = await db.getOrganizationMembers(input.organizationId);
+          const isAlreadyMember = members.some(m => m.userId === existingUser.id);
+          
+          if (isAlreadyMember) {
+            throw new TRPCError({ 
+              code: "BAD_REQUEST", 
+              message: "User is already a member of this organization" 
+            });
+          }
+
+          // Add user as member
+          await db.addOrganizationMember({
+            organizationId: input.organizationId,
+            userId: existingUser.id,
+            role: input.role,
+          });
+
+          return { success: true, message: "Member added successfully" };
         }),
 
       updateRole: protectedProcedure
@@ -208,14 +236,14 @@ export const appRouter = router({
           role: z.enum(["owner", "admin", "member"]),
         }))
         .mutation(async ({ ctx, input }) => {
-          // Get member to find organization
-          const members = await db.getOrganizationMembers(input.memberId);
-          if (members.length === 0) {
+          // Get member details to find organization
+          const member = await db.getOrganizationMemberById(input.memberId);
+          if (!member) {
             throw new TRPCError({ code: "NOT_FOUND", message: "Member not found" });
           }
 
           // Check access (only owners can change roles)
-          await checkOrganizationAccess(ctx.user.id, input.memberId, "owner");
+          await checkOrganizationAccess(ctx.user.id, member.organizationId, "owner");
 
           await db.updateOrganizationMemberRole(input.memberId, input.role);
           return { success: true };

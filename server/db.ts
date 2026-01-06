@@ -137,6 +137,14 @@ export async function updateUser(id: number, updates: Partial<InsertUser>) {
   await db.update(users).set(updates).where(eq(users.id, id));
 }
 
+export async function getUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return result[0] || null;
+}
+
 // ============================================================================
 // ORGANIZATIONS
 // ============================================================================
@@ -234,6 +242,19 @@ export async function getOrganizationMembers(organizationId: number) {
     .innerJoin(users, eq(organizationMembers.userId, users.id))
     .where(eq(organizationMembers.organizationId, organizationId))
     .orderBy(desc(organizationMembers.joinedAt));
+}
+
+export async function getOrganizationMemberById(memberId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(organizationMembers)
+    .where(eq(organizationMembers.id, memberId))
+    .limit(1);
+  
+  return result[0] || null;
 }
 
 export async function updateOrganizationMemberRole(memberId: number, role: "owner" | "admin" | "member") {
