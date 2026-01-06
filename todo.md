@@ -431,4 +431,20 @@
 - [x] Enhance Delete Organization dialog with better error messaging
 - [x] Add warning about deleting projects first
 - [x] Test all admin panel fixes
+- [x] Commit and push changes
+
+## Phase 35: Usage Analytics Dashboard (Current)
+- [x] Design analytics data model for tracking usage metrics
+- [x] Build analytics queries for database size, API calls, storage usage
+- [x] Create interactive charts with recharts (line, bar, pie, area charts)
+- [x] Add time range filters (24h, 7d, 30d, 90d)
+- [x] Build usage trend visualization with multiple metrics
+- [x] Add bandwidth usage tracking
+- [x] Create active users/projects metrics
+- [x] Add resource breakdown pie chart
+- [x] Create detailed metrics table
+- [x] Add export functionality UI (CSV, JSON, Report)
+- [x] Implement summary statistics cards
+- [ ] Write comprehensive tests for analytics
+- [ ] Test all analytics features end-to-end
 - [ ] Commit and push changes

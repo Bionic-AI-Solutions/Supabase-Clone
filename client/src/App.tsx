@@ -18,6 +18,7 @@ import AdminPanel from "./pages/AdminPanel";
 import Studio from "./pages/Studio";
 import TeamCollaboration from "./pages/TeamCollaboration";
 import OrganizationDetail from "./pages/OrganizationDetail";
+import UsageAnalytics from "./pages/UsageAnalytics";
 
 function Router() {
   return (
@@ -32,7 +33,8 @@ function Router() {
       <Route path={"/projects/:id/studio"} component={Studio} />
       <Route path={"/projects/:id/functions"} component={EdgeFunctions} />
       <Route path={"/projects/:id/realtime"} component={Realtime} />
-      <Route path={"/projects/:id/usage"} component={Usage} />
+        <Route path={"/:projectId/usage"} component={Usage} />
+      <Route path={"/:projectId/analytics"} component={UsageAnalytics} />
       <Route path={"/billing"} component={Billing} />
       <Route path={"/settings"} component={Settings} />
       <Route path={"/admin"} component={AdminPanel} />
