@@ -259,9 +259,20 @@ export default function Organizations() {
             <DialogTitle>Delete Organization</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete "{selectedOrg?.name}"? This action cannot be undone.
-              All projects in this organization must be deleted first.
             </DialogDescription>
           </DialogHeader>
+          {selectedOrg && (
+            <div className="space-y-4">
+              <div className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-4">
+                <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                  ⚠️ Important: All projects in this organization must be deleted first.
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Please go to the Projects page and delete all projects associated with this organization before attempting to delete it.
+                </p>
+              </div>
+            </div>
+          )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
               Cancel

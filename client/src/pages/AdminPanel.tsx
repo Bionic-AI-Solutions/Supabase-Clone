@@ -212,6 +212,8 @@ function UsersTab({ searchTerm, setSearchTerm }: { searchTerm: string; setSearch
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [editRole, setEditRole] = useState<"admin" | "user">("user");
+  const [editName, setEditName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
 
   const utils = trpc.useUtils();
 
@@ -234,6 +236,8 @@ function UsersTab({ searchTerm, setSearchTerm }: { searchTerm: string; setSearch
   const handleEditUser = (user: any) => {
     setSelectedUser(user);
     setEditRole(user.role);
+    setEditName(user.name || "");
+    setEditEmail(user.email || "");
     setIsEditDialogOpen(true);
   };
 
@@ -243,6 +247,8 @@ function UsersTab({ searchTerm, setSearchTerm }: { searchTerm: string; setSearch
     updateUser.mutate({
       id: selectedUser.id,
       role: editRole,
+      name: editName,
+      email: editEmail,
     });
   };
 
@@ -333,12 +339,25 @@ function UsersTab({ searchTerm, setSearchTerm }: { searchTerm: string; setSearch
           {selectedUser && (
             <div className="space-y-4">
               <div>
-                <Label>Name</Label>
-                <p className="text-sm font-medium mt-1">{selectedUser.name}</p>
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  placeholder="Enter user name"
+                  className="mt-1"
+                />
               </div>
               <div>
-                <Label>Email</Label>
-                <p className="text-sm text-muted-foreground mt-1">{selectedUser.email}</p>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  placeholder="Enter user email"
+                  className="mt-1"
+                />
               </div>
               <div>
                 <Label htmlFor="role">Role</Label>

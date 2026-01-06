@@ -17,6 +17,7 @@ import Settings from "./pages/Settings";
 import AdminPanel from "./pages/AdminPanel";
 import Studio from "./pages/Studio";
 import TeamCollaboration from "./pages/TeamCollaboration";
+import OrganizationDetail from "./pages/OrganizationDetail";
 
 function Router() {
   return (
@@ -24,6 +25,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/organizations"} component={Organizations} />
+      <Route path={"/organizations/:id"} component={OrganizationDetail} />
       <Route path={"/organizations/:id/team"} component={TeamCollaboration} />
       <Route path={"/projects"} component={Projects} />
       <Route path={"/projects/:id"} component={ProjectDetail} />

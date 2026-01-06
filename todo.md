@@ -421,3 +421,14 @@
 - [ ] Test with multiple projects and organizations
 - [ ] Write comprehensive tests
 - [ ] Performance optimization
+
+## Phase 34: Admin Panel Bug Fixes
+- [x] Fix Admin Organizations "View" button 404 error
+- [x] Create OrganizationDetail page with members and projects list
+- [x] Add OrganizationDetail route to App.tsx
+- [x] Add Users edit functionality (name, email editing)
+- [x] Update users.update endpoint to accept name and email
+- [x] Enhance Delete Organization dialog with better error messaging
+- [x] Add warning about deleting projects first
+- [x] Test all admin panel fixes
+- [ ] Commit and push changes

@@ -985,6 +985,8 @@ export const appRouter = router({
       .input(z.object({
         id: z.number(),
         role: z.enum(["admin", "user"]).optional(),
+        name: z.string().optional(),
+        email: z.string().email().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Only admins can update user roles
