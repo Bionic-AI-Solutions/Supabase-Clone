@@ -448,3 +448,10 @@
 - [ ] Write comprehensive tests for analytics
 - [ ] Test all analytics features end-to-end
 - [ ] Commit and push changes
+
+## Phase 36: Organization Deletion UX Fix (Current)
+- [x] Enhance delete dialog to show list of projects blocking deletion
+- [x] Add option to delete all projects automatically
+- [x] Improve error messaging for better UX
+- [x] Test the fix end-to-end
+- [ ] Commit and push changes

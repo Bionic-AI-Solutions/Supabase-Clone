@@ -50,6 +50,12 @@ export default function Organizations() {
     },
   });
 
+  const { data: orgProjects } = trpc.projects.list.useQuery({ organizationId: selectedOrg?.id || 0 }, {
+    enabled: !!(isAuthenticated && deleteDialogOpen && selectedOrg),
+  });
+
+  const projectsInOrg = selectedOrg && orgProjects ? orgProjects.filter((p: any) => p.organizationId === selectedOrg.id) : [];
+
   const deleteMutation = trpc.organizations.delete.useMutation({
     onSuccess: () => {
       utils.organizations.list.invalidate();
@@ -59,6 +65,16 @@ export default function Organizations() {
     },
     onError: (error) => {
       toast.error(error.message || "Failed to delete organization");
+    },
+  });
+
+  const deleteProjectsMutation = trpc.projects.delete.useMutation({
+    onSuccess: () => {
+      utils.projects.list.invalidate();
+      toast.success("Projects deleted successfully. You can now delete the organization.");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to delete projects");
     },
   });
 
@@ -86,7 +102,19 @@ export default function Organizations() {
 
   const handleDelete = () => {
     if (!selectedOrg) return;
+    if (projectsInOrg.length > 0) {
+      toast.error("Please delete all projects first or use the delete projects button below");
+      return;
+    }
     deleteMutation.mutate({ id: selectedOrg.id });
+  };
+
+  const handleDeleteAllProjects = () => {
+    if (projectsInOrg.length === 0 || !selectedOrg) return;
+    // Delete projects one by one
+    projectsInOrg.forEach((project: any) => {
+      deleteProjectsMutation.mutate({ id: project.id });
+    });
   };
 
   const openEditDialog = (org: any) => {
@@ -263,21 +291,51 @@ export default function Organizations() {
           </DialogHeader>
           {selectedOrg && (
             <div className="space-y-4">
-              <div className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-4">
-                <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
-                  ⚠️ Important: All projects in this organization must be deleted first.
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Please go to the Projects page and delete all projects associated with this organization before attempting to delete it.
-                </p>
-              </div>
+              {projectsInOrg.length > 0 ? (
+                <>
+                  <div className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-4">
+                    <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                      ⚠️ This organization has {projectsInOrg.length} project(s) that must be deleted first.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Projects to delete:</p>
+                    <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg border p-3 bg-muted/50">
+                      {projectsInOrg.map((project: any) => (
+                        <div key={project.id} className="text-sm flex items-center justify-between">
+                          <span>{project.name}</span>
+                          <span className="text-xs text-muted-foreground">ID: {project.id}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    className="w-full"
+                    onClick={handleDeleteAllProjects}
+                    disabled={deleteProjectsMutation.isPending}
+                  >
+                    {deleteProjectsMutation.isPending ? "Deleting projects..." : `Delete ${projectsInOrg.length} Project(s)`}
+                  </Button>
+                </>
+              ) : (
+                <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4">
+                  <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                    ⚠️ This will permanently delete the organization and all associated data.
+                  </p>
+                </div>
+              )}
             </div>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={deleteMutation.isPending}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending || projectsInOrg.length > 0}
+            >
               {deleteMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
